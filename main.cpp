@@ -1,7 +1,7 @@
 #include <SFML/Graphics.hpp>
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode(800, 600), "AFO 2.0");
+    sf::RenderWindow window(sf::VideoMode(1000, 700), "AFO 2.0");
 
     while (window.isOpen()) {
         sf::Event event;
