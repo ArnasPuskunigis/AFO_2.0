@@ -2,6 +2,7 @@
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(1000, 700), "AFO 2.0");
+    window.setFramerateLimit(60);
 
     while (window.isOpen()) {
         sf::Event event;
