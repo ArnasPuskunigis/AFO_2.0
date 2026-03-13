@@ -6,7 +6,7 @@ One thing that is really interesting to me is performance, a detailed benchmarki
 Here is the website for the original AFO game.
 [Click here](https://mazzs-games.itch.io/all-for-one)
 
-##Goals
+## Goals
 - Sprites
 - Controls
 - HUD
@@ -15,10 +15,10 @@ Here is the website for the original AFO game.
 - Pickups
 - Music/SFX
  
-##Extension
+## Extension
 - Particle system
 
-##Benchmarks
+## Benchmarks
 - FPS
 - RAM/GPU/CPU usage
 - Load times
