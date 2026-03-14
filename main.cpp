@@ -26,6 +26,18 @@ int main()
                 window.close();
                 std::cout << "Game was closed!" << std::endl;
             }
+            
+            if (event.type == sf::Event::MouseButtonPressed)
+            {
+                if (event.mouseButton.button == sf::Mouse::Left)
+                {
+                    sf::Vector2i localPosition = sf::Mouse::getPosition(window);
+                    float mouseX = localPosition.x;
+                    float mouseY = localPosition.y;
+
+                    std::cout << "Shot fired at X: " << mouseX << " and Y: " << mouseY << "!" << std::endl;
+                }
+            }
 
             if (event.type == sf::Event::KeyPressed)
             {
