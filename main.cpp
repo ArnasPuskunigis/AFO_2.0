@@ -1,13 +1,22 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "Player.h"
+#include "Bullet.h"
 
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(1000, 700), "AFO 2.0");
     window.setFramerateLimit(60);
 
-    Player player;
+
+    // textures 
+    sf::Texture bulletTexture;
+    bulletTexture.loadFromFile("2D/BulletBlue.png");
+    sf::Texture playerTexture;
+    playerTexture.loadFromFile("2D/Player.png");
+
+    Player player(playerTexture);
+    std::vector<Bullet> bullets;
 
     // Start clock for deltatime (Makes it so speed is not FPS dependent)
     sf::Clock clock;
@@ -37,7 +46,7 @@ int main()
                     sf::Vector2i localPosition = sf::Mouse::getPosition(window);
                     float mouseX = localPosition.x;
                     float mouseY = localPosition.y;
-
+                    bullets.push_back(Bullet(mouseX, mouseY, bulletTexture));
                     std::cout << "Shot fired at X: " << mouseX << " and Y: " << mouseY << "!" << std::endl;
                 }
             }
@@ -45,8 +54,18 @@ int main()
 
         player.update(deltaTime);
 
+        for (Bullet& bullet : bullets)
+        {
+            bullet.update(deltaTime);
+        }
+
         window.clear(sf::Color::Black);
         player.draw(window);
+
+        for (Bullet& bullet : bullets)
+        {
+            bullet.draw(window);
+        }
         window.display();
     }
 }

@@ -1,7 +1,6 @@
 #include "Player.h"
 
-Player::Player() {
-    texture.loadFromFile("2D/Player.png");
+Player::Player(sf::Texture& texture) {
     sprite.setTexture(texture);
     sprite.setScale(0.5f, 0.5f);
 }
