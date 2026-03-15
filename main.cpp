@@ -2,14 +2,14 @@
 #include <SFML/Graphics.hpp>
 #include "Player.h"
 #include "Bullet.h"
+#include <math.h>
 
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(1000, 700), "AFO 2.0");
     window.setFramerateLimit(60);
 
-
-    // textures 
+    // textures
     sf::Texture backgroundTexture;
     backgroundTexture.loadFromFile("2D/SpaceBackground4K.png");
 
@@ -20,7 +20,6 @@ int main()
     bulletTexture.loadFromFile("2D/BulletBlue.png");
     sf::Texture playerTexture;
     playerTexture.loadFromFile("2D/Player.png");
-    
 
     Player player(playerTexture);
     std::vector<Bullet> bullets;
@@ -50,31 +49,33 @@ int main()
             {
                 if (event.mouseButton.button == sf::Mouse::Left)
                 {
-                    sf::Vector2i localPosition = sf::Mouse::getPosition(window);
-                    float mouseX = localPosition.x;
-                    float mouseY = localPosition.y;
-                    bullets.push_back(Bullet(player.getWeaponPosition().x, player.getWeaponPosition().y, bulletTexture));
-                    std::cout << "Shot fired at X: " << mouseX << " and Y: " << mouseY << "!" << std::endl;
+                    sf::Vector2f spawnPos = player.getWeaponPosition();
+                    sf::Vector2i mouseRaw = sf::Mouse::getPosition(window);
+                    sf::Vector2f mousePos(mouseRaw.x, mouseRaw.y);
+                    sf::Vector2f direction = mousePos - spawnPos;
+                    float angle = std::atan2(direction.y, direction.x) * (180.f / 3.14159f);
+                    bullets.push_back(Bullet(spawnPos.x, spawnPos.y, angle, bulletTexture));
                 }
             }
         }
         player.update(deltaTime);
 
-        for (Bullet& bullet : bullets)
+        for (Bullet &bullet : bullets)
         {
             bullet.update(deltaTime);
         }
 
         window.clear(sf::Color::Black);
-        //Always draw bg first
+        // Always draw background first
         window.draw(backgroundSprite);
 
-        player.draw(window);
-
-        for (Bullet& bullet : bullets)
+        // Draw bullets under player sprite
+        for (Bullet &bullet : bullets)
         {
             bullet.draw(window);
         }
+
+        player.draw(window);
         window.display();
     }
 }

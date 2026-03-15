@@ -6,7 +6,7 @@ public:
     void handleInput(float deltaTime);
     void update(float deltaTime);
     void draw(sf::RenderWindow& window);
-    sf::Vector2i getWeaponPosition();
+    sf::Vector2f getWeaponPosition();
 
 private:
     sf::Sprite sprite;

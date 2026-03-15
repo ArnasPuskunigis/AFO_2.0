@@ -1,11 +1,23 @@
 #include "Bullet.h"
 #include <iostream>
+#include <math.h>
+#include <SFML/Graphics.hpp>
 
-Bullet::Bullet(float x, float y, sf::Texture& texture)
+Bullet::Bullet(float x, float y, float angle, sf::Texture& texture)
 {
     sprite.setTexture(texture);
+    sprite.setOrigin(texture.getSize().x / 2.f, texture.getSize().y / 2.f);
+    sprite.setScale(0.3f, 0.3f);
     sprite.setPosition(x, y);
-    sprite.setScale(0.2f, 0.2f);
+    sprite.setRotation(angle + 90.f);
+
+    float radians = angle * (3.14159f / 180.f);
+    velocity = sf::Vector2f(std::cos(radians), std::sin(radians)) * speed;
+}
+
+void Bullet::update(float deltaTime)
+{
+    sprite.move(velocity * deltaTime);
 }
 
 void Bullet::flyForwards(float deltaTime)
@@ -13,10 +25,6 @@ void Bullet::flyForwards(float deltaTime)
     sprite.move(sf::Vector2f(speed, speed) * deltaTime);
 }
 
-void Bullet::update(float deltaTime)
-{
-    flyForwards(deltaTime);
-}
 
 void Bullet::draw(sf::RenderWindow &window)
 {
