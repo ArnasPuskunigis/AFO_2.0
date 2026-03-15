@@ -1,6 +1,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "Player.h"
+#include "Enemy.h"
 #include "Bullet.h"
 #include <math.h>
 
@@ -20,12 +21,19 @@ int main()
     bulletTexture.loadFromFile("2D/BulletBlue.png");
     sf::Texture playerTexture;
     playerTexture.loadFromFile("2D/Player.png");
+    sf::Texture enemyTexture;
+    enemyTexture.loadFromFile("2D/Enemy.png");
 
     Player player(playerTexture);
+    std::vector<Enemy> enemies;
     std::vector<Bullet> bullets;
 
     // Start clock for deltatime (Makes it so speed is not FPS dependent)
     sf::Clock clock;
+
+
+    //Spawn a single enemy
+    enemies.push_back(Enemy(600.0f, 600.0f, enemyTexture));
 
     while (window.isOpen())
     {
@@ -75,6 +83,11 @@ int main()
             bullet.draw(window);
         }
 
+        for (Enemy &enemy : enemies)
+        {
+            enemy.draw(window);
+        }
+        
         player.draw(window);
         window.display();
     }
