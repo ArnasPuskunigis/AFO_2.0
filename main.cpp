@@ -10,10 +10,17 @@ int main()
 
 
     // textures 
+    sf::Texture backgroundTexture;
+    backgroundTexture.loadFromFile("2D/SpaceBackground4K.png");
+
+    sf::Sprite backgroundSprite;
+    backgroundSprite.setTexture(backgroundTexture);
+
     sf::Texture bulletTexture;
     bulletTexture.loadFromFile("2D/BulletBlue.png");
     sf::Texture playerTexture;
     playerTexture.loadFromFile("2D/Player.png");
+    
 
     Player player(playerTexture);
     std::vector<Bullet> bullets;
@@ -51,7 +58,6 @@ int main()
                 }
             }
         }
-
         player.update(deltaTime);
 
         for (Bullet& bullet : bullets)
@@ -60,6 +66,9 @@ int main()
         }
 
         window.clear(sf::Color::Black);
+        //Always draw bg first
+        window.draw(backgroundSprite);
+
         player.draw(window);
 
         for (Bullet& bullet : bullets)
