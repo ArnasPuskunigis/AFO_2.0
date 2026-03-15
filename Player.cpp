@@ -2,7 +2,7 @@
 
 Player::Player(sf::Texture& texture) {
     sprite.setTexture(texture);
-    sprite.setScale(0.1f, 0.1f);
+    sprite.setScale(0.2f, 0.2f);
 }
 
 sf::Vector2i Player::getWeaponPosition()
