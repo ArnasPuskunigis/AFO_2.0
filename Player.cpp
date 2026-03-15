@@ -2,7 +2,13 @@
 
 Player::Player(sf::Texture& texture) {
     sprite.setTexture(texture);
-    sprite.setScale(0.5f, 0.5f);
+    sprite.setScale(0.1f, 0.1f);
+}
+
+sf::Vector2i Player::getWeaponPosition()
+{
+    sf::FloatRect bounds = sprite.getGlobalBounds();
+    return sf::Vector2i(bounds.left + bounds.width / 2.f, bounds.top  + bounds.height);
 }
 
 void Player::handleInput(float deltaTime) {
