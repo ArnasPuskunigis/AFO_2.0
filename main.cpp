@@ -46,7 +46,7 @@ int main()
                     sf::Vector2i localPosition = sf::Mouse::getPosition(window);
                     float mouseX = localPosition.x;
                     float mouseY = localPosition.y;
-                    bullets.push_back(Bullet(mouseX, mouseY, bulletTexture));
+                    bullets.push_back(Bullet(player.getWeaponPosition().x, player.getWeaponPosition().y, bulletTexture));
                     std::cout << "Shot fired at X: " << mouseX << " and Y: " << mouseY << "!" << std::endl;
                 }
             }

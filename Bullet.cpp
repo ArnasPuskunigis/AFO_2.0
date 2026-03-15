@@ -5,7 +5,7 @@ Bullet::Bullet(float x, float y, sf::Texture& texture)
 {
     sprite.setTexture(texture);
     sprite.setPosition(x, y);
-    sprite.setScale(0.5f, 0.5f);
+    sprite.setScale(0.1f, 0.1f);
 }
 
 void Bullet::flyForwards(float deltaTime)
