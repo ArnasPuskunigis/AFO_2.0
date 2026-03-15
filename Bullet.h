@@ -2,12 +2,13 @@
 
 class Bullet {
 public:
-    Bullet(float x, float y, sf::Texture& texture);
+    Bullet(float x, float y, float angle, sf::Texture& texture);
     void flyForwards(float deltaTime);
     void update(float deltaTime);
     void draw(sf::RenderWindow& window);
 
 private:
     sf::Sprite sprite;
-    float speed = 100.0f;
+    float speed = 500.0f;
+    sf::Vector2f velocity;
 };
