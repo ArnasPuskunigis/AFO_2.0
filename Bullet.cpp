@@ -15,16 +15,22 @@ Bullet::Bullet(float x, float y, float angle, sf::Texture& texture)
     velocity = sf::Vector2f(std::cos(radians), std::sin(radians)) * speed;
 }
 
+sf::Sprite& Bullet::getSprite(){
+    return sprite;
+}
+
+void Bullet::disableCollision(){
+    canCollide = false;
+}
+
+bool Bullet::getCanCollide(){
+    return canCollide;
+}
+
 void Bullet::update(float deltaTime)
 {
     sprite.move(velocity * deltaTime);
 }
-
-void Bullet::flyForwards(float deltaTime)
-{
-    sprite.move(sf::Vector2f(speed, speed) * deltaTime);
-}
-
 
 void Bullet::draw(sf::RenderWindow &window)
 {

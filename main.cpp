@@ -73,11 +73,16 @@ int main()
             bullet.update(deltaTime);
         }
 
+        for (Enemy &enemy : enemies)
+        {
+            enemy.update(deltaTime, bullets);
+        }
+
         window.clear(sf::Color::Black);
-        // Always draw background first
+        // Always draw background first to the bottom layer
         window.draw(backgroundSprite);
 
-        // Draw bullets under player sprite
+        // Draw bullets under player sprite layer
         for (Bullet &bullet : bullets)
         {
             bullet.draw(window);
