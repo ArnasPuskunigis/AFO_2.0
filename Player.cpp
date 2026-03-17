@@ -1,8 +1,11 @@
 #include "Player.h"
+#include <iostream>
 
 Player::Player(sf::Texture& texture) {
     sprite.setTexture(texture);
     sprite.setScale(0.2f, 0.2f);
+    health = maxHealth;
+    ammo = maxAmmo;
 }
 
 sf::Vector2f Player::getWeaponPosition()
@@ -34,7 +37,61 @@ void Player::handleInput(float deltaTime) {
         }
 }
 
-void Player::update(float deltaTime) {
+void Player::checkForEnemyCollisions(std::vector<Enemy>& enemies){
+    sf::FloatRect bounds = sprite.getGlobalBounds();
+
+    for (Enemy &enemy : enemies)
+    {
+        if (bounds.intersects(enemy.getSprite().getGlobalBounds()))
+        {
+            takeDamage();
+            enemy.takeDamage();
+            std::cout << "An enemy has hit the player!" << std::endl;
+        }
+    }
+}
+
+void Player::shootBullet(){
+    ammo -= 1;
+    std::cout << "Ammo is at :" << ammo << " now" << std::endl;
+}
+
+void Player::takeDamage()
+{
+    if (health < 10)
+    {
+        health = 0;
+        std::cout << "You died!";
+    }
+    else
+    {
+        health -= 10;
+        std::cout << "Health is at :" << health << " now" << std::endl;
+    }
+}
+
+void Player::receiveBullets(){
+    if (ammo >= maxAmmo - 5){
+        ammo = maxAmmo;
+    }
+    else{
+        ammo += 5;
+    }
+    std::cout << "Ammo picked up, now you have :" << ammo << std::endl;
+}
+
+void Player::receiveHealth(){
+    if (health >= maxHealth - 50){
+        health = maxHealth;
+    }
+    else{
+        health += 5;
+    }
+    std::cout << "Health picked up, now you have :" << health << std::endl;
+}
+
+void Player::update(float deltaTime, std::vector<Enemy>& enemies) {
+    checkForEnemyCollisions(enemies);
     handleInput(deltaTime);
 }
 
