@@ -31,8 +31,7 @@ int main()
     // Start clock for deltatime (Makes it so speed is not FPS dependent)
     sf::Clock clock;
 
-
-    //Spawn a single enemy
+    // Spawn a single enemy
     enemies.push_back(Enemy(600.0f, 600.0f, enemyTexture));
 
     while (window.isOpen())
@@ -66,34 +65,35 @@ int main()
                 }
             }
         }
+
+        // 1. UPDATE
         player.update(deltaTime);
 
         for (Bullet &bullet : bullets)
-        {
             bullet.update(deltaTime);
-        }
 
         for (Enemy &enemy : enemies)
-        {
             enemy.update(deltaTime, bullets);
-        }
 
+        // 2. CLEANUP — after all updates, before drawing
+        bullets.erase(
+            std::remove_if(bullets.begin(), bullets.end(),
+                           [](const Bullet &bullet)
+                           { return !bullet.isAlive(); }),
+            bullets.end());
+
+        // 3. DRAW
         window.clear(sf::Color::Black);
-        // Always draw background first to the bottom layer
         window.draw(backgroundSprite);
 
-        // Draw bullets under player sprite layer
         for (Bullet &bullet : bullets)
-        {
             bullet.draw(window);
-        }
 
         for (Enemy &enemy : enemies)
-        {
             enemy.draw(window);
-        }
-        
+
         player.draw(window);
+
         window.display();
     }
 }

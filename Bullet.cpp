@@ -13,23 +13,34 @@ Bullet::Bullet(float x, float y, float angle, sf::Texture& texture)
 
     float radians = angle * (3.14159f / 180.f);
     velocity = sf::Vector2f(std::cos(radians), std::sin(radians)) * speed;
+
+    lifetime = 3.0f;
 }
 
 sf::Sprite& Bullet::getSprite(){
     return sprite;
 }
 
-void Bullet::disableCollision(){
-    canCollide = false;
+void Bullet::calculateLifetime(float deltaTime){
+    lifetime -= deltaTime;
+    if (lifetime <= 0){
+        kill();
+    }
 }
 
-bool Bullet::getCanCollide(){
-    return canCollide;
+void Bullet::kill(){
+    alive = false;
+    std::cout << "A bullet has been deleted" << std::endl;
+}
+
+bool Bullet::isAlive() const {
+    return alive;
 }
 
 void Bullet::update(float deltaTime)
 {
     sprite.move(velocity * deltaTime);
+    calculateLifetime(deltaTime);
 }
 
 void Bullet::draw(sf::RenderWindow &window)

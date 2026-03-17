@@ -16,9 +16,9 @@ void Enemy::checkForBulletCollisions(std::vector<Bullet>& bullets)
 
     for (Bullet &Bullet : bullets)
     {
-        if (bounds.intersects(Bullet.getSprite().getGlobalBounds()) && Bullet.getCanCollide() == true)
+        if (bounds.intersects(Bullet.getSprite().getGlobalBounds()) && Bullet.isAlive() == true)
         {
-            Bullet.disableCollision();
+            Bullet.kill();
             std::cout << "A bullet has hit this enemy!" << std::endl;
         }
     }
