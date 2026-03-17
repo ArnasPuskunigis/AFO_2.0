@@ -8,12 +8,15 @@ public:
     void flyForwards(float deltaTime);
     void update(float deltaTime);
     void draw(sf::RenderWindow& window);
-    void disableCollision();
-    bool getCanCollide();
+    void calculateLifetime(float deltaTime);
+    void kill();
+
+    bool isAlive() const;
     sf::Sprite& getSprite();
 
 private:
-    bool canCollide = true;
+    float lifetime;
+    bool alive =  true;
     sf::Sprite sprite;
     float speed = 500.0f;
     sf::Vector2f velocity;
