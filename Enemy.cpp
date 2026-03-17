@@ -19,9 +19,30 @@ void Enemy::checkForBulletCollisions(std::vector<Bullet>& bullets)
         if (bounds.intersects(Bullet.getSprite().getGlobalBounds()) && Bullet.isAlive() == true)
         {
             Bullet.kill();
+            takeDamage();
             std::cout << "A bullet has hit this enemy!" << std::endl;
         }
     }
+}
+
+sf::Sprite& Enemy::getSprite(){
+    return sprite;
+}
+
+void Enemy::takeDamage(){
+    health -= 10;
+    if (health <= 0){
+        kill();
+    }
+}
+
+bool Enemy::isAlive() const {
+    return alive;
+}
+
+void Enemy::kill(){
+    alive = false;
+    std::cout << "This enemy ship has been destroyed" << std::endl;
 }
 
 void Enemy::update(float deltaTime, std::vector<Bullet>& bullets)

@@ -56,18 +56,24 @@ int main()
             {
                 if (event.mouseButton.button == sf::Mouse::Left)
                 {
-                    sf::Vector2f spawnPos = player.getWeaponPosition();
-                    sf::Vector2i mouseRaw = sf::Mouse::getPosition(window);
-                    sf::Vector2f mousePos(mouseRaw.x, mouseRaw.y);
-                    sf::Vector2f direction = mousePos - spawnPos;
-                    float angle = std::atan2(direction.y, direction.x) * (180.f / 3.14159f);
-                    bullets.push_back(Bullet(spawnPos.x, spawnPos.y, angle, bulletTexture));
+                    if (player.getAmmo() >= 1)
+                    {
+                        player.shootBullet();
+                        sf::Vector2f spawnPos = player.getWeaponPosition();
+                        sf::Vector2i mouseRaw = sf::Mouse::getPosition(window);
+                        sf::Vector2f mousePos(mouseRaw.x, mouseRaw.y);
+                        sf::Vector2f direction = mousePos - spawnPos;
+                        float angle = std::atan2(direction.y, direction.x) * (180.f / 3.14159f);
+                        bullets.push_back(Bullet(spawnPos.x, spawnPos.y, angle, bulletTexture));
+                    }
+                    else{
+                        std::cout << "You have no ammo left! Pick up some of those blueammo crates" << std::endl;
+                    }
                 }
             }
         }
 
-        // 1. UPDATE
-        player.update(deltaTime);
+        player.update(deltaTime, enemies);
 
         for (Bullet &bullet : bullets)
             bullet.update(deltaTime);
@@ -75,14 +81,18 @@ int main()
         for (Enemy &enemy : enemies)
             enemy.update(deltaTime, bullets);
 
-        // 2. CLEANUP — after all updates, before drawing
         bullets.erase(
             std::remove_if(bullets.begin(), bullets.end(),
                            [](const Bullet &bullet)
                            { return !bullet.isAlive(); }),
             bullets.end());
 
-        // 3. DRAW
+        enemies.erase(
+            std::remove_if(enemies.begin(), enemies.end(),
+                           [](const Enemy &enemy)
+                           { return !enemy.isAlive(); }),
+            enemies.end());
+
         window.clear(sf::Color::Black);
         window.draw(backgroundSprite);
 
