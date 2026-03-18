@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "Player.h"
 #include "Enemy.h"
+#include "Pickup.h"
 #include "Bullet.h"
 #include <math.h>
 
@@ -23,16 +24,23 @@ int main()
     playerTexture.loadFromFile("2D/Player.png");
     sf::Texture enemyTexture;
     enemyTexture.loadFromFile("2D/Enemy.png");
+    sf::Texture ammoTexture;
+    ammoTexture.loadFromFile("2D/AmmoCrate.png");
+    sf::Texture healthTexture;
+    healthTexture.loadFromFile("2D/HealthBox.png");
 
     Player player(playerTexture);
     std::vector<Enemy> enemies;
     std::vector<Bullet> bullets;
+    std::vector<Pickup> pickups;
 
     // Start clock for deltatime (Makes it so speed is not FPS dependent)
     sf::Clock clock;
 
     // Spawn a single enemy
     enemies.push_back(Enemy(600.0f, 600.0f, enemyTexture));
+    pickups.push_back(Pickup(10.0f, 600.0f, ammoTexture, PickupType::Ammo));
+    pickups.push_back(Pickup(600.0f, 10.0f, healthTexture, PickupType::Health));
 
     while (window.isOpen())
     {
@@ -101,6 +109,9 @@ int main()
 
         for (Enemy &enemy : enemies)
             enemy.draw(window);
+
+        for (Pickup &pickup : pickups)
+            pickup.draw(window);
 
         player.draw(window);
 
