@@ -4,3 +4,14 @@ Debug/
 Release/
 *.user
 *.suo
+*.exe
+*.pdb
+*.ilk
+*.obj
+*.idb
+*.log
+*.tlog
+*.recipe
+**/x64/
+**/Debug/
+**/Release/
