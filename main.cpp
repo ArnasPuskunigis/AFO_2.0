@@ -1,5 +1,6 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include "Player.h"
 #include "Enemy.h"
 #include "Pickup.h"
@@ -29,6 +30,32 @@ int main()
     sf::Texture healthTexture;
     healthTexture.loadFromFile("2D/HealthBox.png");
 
+    // sound buffers
+    sf::SoundBuffer playerLaserBuffer;
+    if (!playerLaserBuffer.loadFromFile("Audio/laserSmall_001.ogg"))
+        return -1;
+
+    sf::SoundBuffer playerThrusterBuffer;
+    if (!playerThrusterBuffer.loadFromFile("Audio/thrusterFire_003.ogg"))
+        return -1;
+
+    sf::SoundBuffer pickupBuffer;
+    if (!pickupBuffer.loadFromFile("Audio/lowThreeTone.ogg"))
+        return -1;
+
+    sf::Sound playerLaserSound;
+    playerLaserSound.setBuffer(playerLaserBuffer);
+    playerLaserSound.setVolume(10);
+
+    sf::Sound playerThrusterSound;
+    playerThrusterSound.setBuffer(playerThrusterBuffer);
+    playerThrusterSound.setVolume(5);
+    playerThrusterSound.setLoop(true);
+
+    sf::Sound pickupSound;
+    pickupSound.setBuffer(pickupBuffer);
+    pickupSound.setVolume(10);
+
     Player player(playerTexture);
     std::vector<Enemy> enemies;
     std::vector<Bullet> bullets;
@@ -41,6 +68,7 @@ int main()
     enemies.push_back(Enemy(600.0f, 600.0f, enemyTexture));
     pickups.push_back(Pickup(10.0f, 600.0f, ammoTexture, PickupType::Ammo));
     pickups.push_back(Pickup(600.0f, 10.0f, healthTexture, PickupType::Health));
+    playerThrusterSound.play();
 
     while (window.isOpen())
     {
@@ -73,9 +101,12 @@ int main()
                         sf::Vector2f direction = mousePos - spawnPos;
                         float angle = std::atan2(direction.y, direction.x) * (180.f / 3.14159f);
                         bullets.push_back(Bullet(spawnPos.x, spawnPos.y, angle, bulletTexture));
+
+                        
+                        playerLaserSound.play();
                     }
                     else{
-                        std::cout << "You have no ammo left! Pick up some of those blueammo crates" << std::endl;
+                        std::cout << "You have no ammo left! Pick up some of those blue ammo crates" << std::endl;
                     }
                 }
             }
