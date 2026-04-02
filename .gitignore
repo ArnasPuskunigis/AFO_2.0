@@ -1,2 +1,6 @@
-.vscode/SFML
-game
+   .vs/
+   x64/
+   Debug/
+   Release/
+   *.user
+   *.suo

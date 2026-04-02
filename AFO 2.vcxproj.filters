@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Audio">
+      <UniqueIdentifier>{b1c5ce10-4dd4-48c2-9281-0c86fc97061a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2D">
+      <UniqueIdentifier>{176e3dc7-0c3e-4ed4-b08f-ebff6fe45688}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Bullet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Pickup.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Bullet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Pickup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
+    <None Include="Audio\doorOpen_000.ogg">
+      <Filter>Audio</Filter>
+    </None>
+    <None Include="Audio\explosionCrunch_000.ogg">
+      <Filter>Audio</Filter>
+    </None>
+    <None Include="Audio\explosionCrunch_001.ogg">
+      <Filter>Audio</Filter>
+    </None>
+    <None Include="Audio\in game music.ogg">
+      <Filter>Audio</Filter>
+    </None>
+    <None Include="Audio\laser1.ogg">
+      <Filter>Audio</Filter>
+    </None>
+    <None Include="Audio\laserLarge_001.ogg">
+      <Filter>Audio</Filter>
+    </None>
+    <None Include="Audio\laserSmall_001.ogg">
+      <Filter>Audio</Filter>
+    </None>
+    <None Include="Audio\lowDown.ogg">
+      <Filter>Audio</Filter>
+    </None>
+    <None Include="Audio\lowThreeTone.ogg">
+      <Filter>Audio</Filter>
+    </None>
+    <None Include="Audio\menu music.ogg">
+      <Filter>Audio</Filter>
+    </None>
+    <None Include="Audio\thrusterFire_003.ogg">
+      <Filter>Audio</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="2D\AmmoCrate.png">
+      <Filter>2D</Filter>
+    </Image>
+    <Image Include="2D\BorderForIcons.png">
+      <Filter>2D</Filter>
+    </Image>
+    <Image Include="2D\Bullet Icon.png">
+      <Filter>2D</Filter>
+    </Image>
+    <Image Include="2D\Bullet.png">
+      <Filter>2D</Filter>
+    </Image>
+    <Image Include="2D\BulletBlue.png">
+      <Filter>2D</Filter>
+    </Image>
+    <Image Include="2D\Button Imporved hi res.png">
+      <Filter>2D</Filter>
+    </Image>
+    <Image Include="2D\Defender.png">
+      <Filter>2D</Filter>
+    </Image>
+    <Image Include="2D\Enemy.png">
+      <Filter>2D</Filter>
+    </Image>
+    <Image Include="2D\HealthBox.png">
+      <Filter>2D</Filter>
+    </Image>
+    <Image Include="2D\HowToPlayMenu-01.png">
+      <Filter>2D</Filter>
+    </Image>
+    <Image Include="2D\Icon Border.png">
+      <Filter>2D</Filter>
+    </Image>
+    <Image Include="2D\Imporved Border Hi Res.png">
+      <Filter>2D</Filter>
+    </Image>
+    <Image Include="2D\LargeEnemyUIpdated.png">
+      <Filter>2D</Filter>
+    </Image>
+    <Image Include="2D\LargeEnemyUpdated.png">
+      <Filter>2D</Filter>
+    </Image>
+    <Image Include="2D\PauseButton.png">
+      <Filter>2D</Filter>
+    </Image>
+    <Image Include="2D\Player.png">
+      <Filter>2D</Filter>
+    </Image>
+    <Image Include="2D\SpaceBackground4K.png">
+      <Filter>2D</Filter>
+    </Image>
+    <Image Include="2D\The HealthBar.png">
+      <Filter>2D</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="2D\Glitch inside.otf">
+      <Filter>2D</Filter>
+    </Font>
+  </ItemGroup>
+</Project>
