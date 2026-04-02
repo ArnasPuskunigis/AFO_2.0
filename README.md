@@ -1,5 +1,5 @@
 # AFO 2.0
-Remaking an old c# unity game into a c++ game to prove I can work with c++ whilst on holiday using just a Steam Deck.
+Remaking an old c# unity game into a c++ game to prove I can work with c++ whilst on holiday using just a Steam Deck. I ran out of time on holiday so now the project has migrated to Windows.
 I expect to encounter multiple issues however I think this will truly test my abilities.
 One thing that is really interesting to me is performance, a detailed benchmarking section will be found below.
 
