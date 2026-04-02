@@ -18,6 +18,7 @@ public:
     int getHealth() { return health; }
     int getAmmo() { return ammo; }
     sf::Vector2f getWeaponPosition();
+    sf::Sprite& getSprite();
 
 private:
     int maxHealth = 200;

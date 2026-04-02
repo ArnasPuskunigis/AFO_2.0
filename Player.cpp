@@ -53,7 +53,7 @@ void Player::checkForEnemyCollisions(std::vector<Enemy>& enemies){
 
 void Player::shootBullet(){
     ammo -= 1;
-    std::cout << "Ammo is at :" << ammo << " now" << std::endl;
+    std::cout << "Ammo: " << ammo << std::endl;
 }
 
 void Player::takeDamage()
@@ -66,8 +66,12 @@ void Player::takeDamage()
     else
     {
         health -= 10;
-        std::cout << "Health is at :" << health << " now" << std::endl;
+        std::cout << "Health: " << health << std::endl;
     }
+}
+
+sf::Sprite& Player::getSprite() {
+    return sprite;
 }
 
 void Player::receiveBullets(){
@@ -77,7 +81,7 @@ void Player::receiveBullets(){
     else{
         ammo += 5;
     }
-    std::cout << "Ammo picked up, now you have :" << ammo << std::endl;
+    std::cout << "Ammo: " << ammo << std::endl;
 }
 
 void Player::receiveHealth(){
@@ -87,7 +91,7 @@ void Player::receiveHealth(){
     else{
         health += 5;
     }
-    std::cout << "Health picked up, now you have :" << health << std::endl;
+    std::cout << "Health: " << health << std::endl;
 }
 
 void Player::update(float deltaTime, std::vector<Enemy>& enemies) {

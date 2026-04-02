@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include "Player.h"
 
 enum class PickupType {
     Health,
@@ -10,7 +11,8 @@ enum class PickupType {
 class Pickup {
 public:
     Pickup(float x, float y, sf::Texture &texture, PickupType type);
-    void update(float deltaTime);
+    void update(float deltaTime, Player& player);
+    void checkForPlayerCollision(Player &player);
     void draw(sf::RenderWindow& window);
     void kill();
     bool isAlive() const;
@@ -18,4 +20,5 @@ public:
 private:
     sf::Sprite sprite;
     bool alive =  true;
+    PickupType pickupType;
 };

@@ -8,7 +8,7 @@
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(1700, 1200), "AFO 2.0");
+    sf::RenderWindow window(sf::VideoMode(1400, 1000), "AFO 2.0");
     window.setFramerateLimit(60);
 
     // textures
@@ -89,6 +89,9 @@ int main()
         for (Enemy &enemy : enemies)
             enemy.update(deltaTime, bullets);
 
+        for (Pickup& pickup : pickups)
+            pickup.update(deltaTime, player);
+
         bullets.erase(
             std::remove_if(bullets.begin(), bullets.end(),
                            [](const Bullet &bullet)
@@ -100,6 +103,12 @@ int main()
                            [](const Enemy &enemy)
                            { return !enemy.isAlive(); }),
             enemies.end());
+
+        pickups.erase(
+            std::remove_if(pickups.begin(), pickups.end(),
+                [](const Pickup& pickup)
+                { return !pickup.isAlive(); }),
+            pickups.end());
 
         window.clear(sf::Color::Black);
         window.draw(backgroundSprite);
