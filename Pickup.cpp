@@ -1,12 +1,13 @@
 #include "Pickup.h"
 #include <iostream>
 
-Pickup::Pickup(float x, float y, sf::Texture &texture, PickupType type)
+Pickup::Pickup(float x, float y, sf::Texture &texture, PickupType type, AudioManager& audioManager) : audio(audioManager)
 {
     sprite.setTexture(texture);
     sprite.setScale(0.03f, 0.03f);
     sprite.setPosition(x, y);
     pickupType = type;
+	audio = audioManager;
 }
 
 void Pickup::checkForPlayerCollision(Player &player)
@@ -23,6 +24,7 @@ void Pickup::checkForPlayerCollision(Player &player)
             player.receiveHealth();
             std::cout << "The player got health!" << std::endl;
         }
+        audio.play("pickup", 20);
         kill();
     }
 }

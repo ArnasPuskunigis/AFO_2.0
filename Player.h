@@ -7,9 +7,9 @@ class Player {
 public:
     Player(sf::Texture& texture);
     void handleInput(float deltaTime);
-    void update(float deltaTime, std::vector<Enemy>& enemies);
+    void update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies);
     void draw(sf::RenderWindow& window);
-    void checkForEnemyCollisions(std::vector<Enemy>& enemies);
+    void checkForEnemyCollisions(std::vector<std::unique_ptr<Enemy>>& enemies);
     void shootBullet();
     void takeDamage();
     void receiveBullets();

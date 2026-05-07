@@ -3,11 +3,12 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-Enemy::Enemy(float x, float y, sf::Texture &texture)
+Enemy::Enemy(float x, float y, sf::Texture &texture, AudioManager& audioManager) : audio(audioManager)
 {
     sprite.setTexture(texture);
     sprite.setScale(0.2f, 0.2f);
     sprite.setPosition(x, y);
+	audio = audioManager;
 }
 
 void Enemy::checkForBulletCollisions(std::vector<Bullet>& bullets)
@@ -32,6 +33,7 @@ sf::Sprite& Enemy::getSprite(){
 void Enemy::takeDamage(){
     health -= 10;
     if (health <= 0){
+		audio.play("enemyExplosion", 20);
         kill();
     }
 }

@@ -6,6 +6,7 @@
 #include "Pickup.h"
 #include "Bullet.h"
 #include <math.h>
+#include "AudioManager.h"
 
 int main()
 {
@@ -30,45 +31,29 @@ int main()
     sf::Texture healthTexture;
     healthTexture.loadFromFile("2D/HealthBox.png");
 
-    // sound buffers
-    sf::SoundBuffer playerLaserBuffer;
-    if (!playerLaserBuffer.loadFromFile("Audio/laserSmall_001.ogg"))
-        return -1;
+	// audio manager
+	AudioManager audioManager;
+	audioManager.load("playerLaser", "Audio/laserSmall_001.ogg");
+	audioManager.load("playerThruster", "Audio/thrusterFire_003.ogg");
+	audioManager.play("playerThruster", 20, true);
+	audioManager.load("pickup", "Audio/lowThreeTone.ogg");
+	audioManager.load("enemyExplosion", "Audio/explosionCrunch_000.ogg");
+    audioManager.load("playerExplosion", "Audio/explosionCrunch_001.ogg");
 
-    sf::SoundBuffer playerThrusterBuffer;
-    if (!playerThrusterBuffer.loadFromFile("Audio/thrusterFire_003.ogg"))
-        return -1;
 
-    sf::SoundBuffer pickupBuffer;
-    if (!pickupBuffer.loadFromFile("Audio/lowThreeTone.ogg"))
-        return -1;
-
-    sf::Sound playerLaserSound;
-    playerLaserSound.setBuffer(playerLaserBuffer);
-    playerLaserSound.setVolume(10);
-
-    sf::Sound playerThrusterSound;
-    playerThrusterSound.setBuffer(playerThrusterBuffer);
-    playerThrusterSound.setVolume(5);
-    playerThrusterSound.setLoop(true);
-
-    sf::Sound pickupSound;
-    pickupSound.setBuffer(pickupBuffer);
-    pickupSound.setVolume(10);
-
+	// game objects
     Player player(playerTexture);
-    std::vector<Enemy> enemies;
     std::vector<Bullet> bullets;
-    std::vector<Pickup> pickups;
 
-    // Start clock for deltatime (Makes it so speed is not FPS dependent)
+    std::vector<std::unique_ptr<Enemy>> enemies;
+    std::vector<std::unique_ptr<Pickup>> pickups;
+
+    // clock for deltatime
     sf::Clock clock;
 
-    // Spawn a single enemy
-    enemies.push_back(Enemy(600.0f, 600.0f, enemyTexture));
-    pickups.push_back(Pickup(10.0f, 600.0f, ammoTexture, PickupType::Ammo));
-    pickups.push_back(Pickup(600.0f, 10.0f, healthTexture, PickupType::Health));
-    playerThrusterSound.play();
+    enemies.push_back(std::make_unique<Enemy>(600.0f, 600.0f, enemyTexture, audioManager));
+    pickups.push_back(std::make_unique<Pickup>(10.0f, 600.0f, ammoTexture, PickupType::Ammo, audioManager));
+    pickups.push_back(std::make_unique<Pickup>(600.0f, 10.0f, healthTexture, PickupType::Health, audioManager));
 
     while (window.isOpen())
     {
@@ -103,7 +88,7 @@ int main()
                         bullets.push_back(Bullet(spawnPos.x, spawnPos.y, angle, bulletTexture));
 
                         
-                        playerLaserSound.play();
+						audioManager.play("playerLaser", 10);
                     }
                     else{
                         std::cout << "You have no ammo left! Pick up some of those blue ammo crates" << std::endl;
@@ -117,11 +102,8 @@ int main()
         for (Bullet &bullet : bullets)
             bullet.update(deltaTime);
 
-        for (Enemy &enemy : enemies)
-            enemy.update(deltaTime, bullets);
-
-        for (Pickup& pickup : pickups)
-            pickup.update(deltaTime, player);
+        for (auto& enemy : enemies)
+            enemy->update(deltaTime, bullets);
 
         bullets.erase(
             std::remove_if(bullets.begin(), bullets.end(),
@@ -131,14 +113,14 @@ int main()
 
         enemies.erase(
             std::remove_if(enemies.begin(), enemies.end(),
-                           [](const Enemy &enemy)
-                           { return !enemy.isAlive(); }),
+                [](const std::unique_ptr<Enemy>& enemy)
+                { return !enemy->isAlive(); }),
             enemies.end());
 
         pickups.erase(
             std::remove_if(pickups.begin(), pickups.end(),
-                [](const Pickup& pickup)
-                { return !pickup.isAlive(); }),
+                [](const std::unique_ptr<Pickup>& pickup)
+                { return !pickup->isAlive(); }),
             pickups.end());
 
         window.clear(sf::Color::Black);
@@ -147,11 +129,11 @@ int main()
         for (Bullet &bullet : bullets)
             bullet.draw(window);
 
-        for (Enemy &enemy : enemies)
-            enemy.draw(window);
+        for (auto& enemy : enemies)
+            enemy->draw(window);
 
-        for (Pickup &pickup : pickups)
-            pickup.draw(window);
+        for (auto& pickup : pickups)
+            pickup->draw(window);
 
         player.draw(window);
 

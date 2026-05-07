@@ -37,15 +37,15 @@ void Player::handleInput(float deltaTime) {
         }
 }
 
-void Player::checkForEnemyCollisions(std::vector<Enemy>& enemies){
+void Player::checkForEnemyCollisions(std::vector<std::unique_ptr<Enemy>>& enemies){
     sf::FloatRect bounds = sprite.getGlobalBounds();
 
-    for (Enemy &enemy : enemies)
+    for (auto& enemy : enemies)
     {
-        if (bounds.intersects(enemy.getSprite().getGlobalBounds()))
+        if (bounds.intersects(enemy->getSprite().getGlobalBounds()))
         {
             takeDamage();
-            enemy.takeDamage();
+            enemy->takeDamage();
             std::cout << "An enemy has hit the player!" << std::endl;
         }
     }
@@ -94,7 +94,7 @@ void Player::receiveHealth(){
     std::cout << "Health: " << health << std::endl;
 }
 
-void Player::update(float deltaTime, std::vector<Enemy>& enemies) {
+void Player::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies) {
     checkForEnemyCollisions(enemies);
     handleInput(deltaTime);
 }
