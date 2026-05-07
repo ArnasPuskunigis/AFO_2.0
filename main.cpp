@@ -105,6 +105,9 @@ int main()
         for (auto& enemy : enemies)
             enemy->update(deltaTime, bullets);
 
+        for (auto& pickup : pickups)
+            pickup->update(deltaTime, player);
+
         bullets.erase(
             std::remove_if(bullets.begin(), bullets.end(),
                            [](const Bullet &bullet)

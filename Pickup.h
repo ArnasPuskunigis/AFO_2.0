@@ -23,5 +23,5 @@ private:
     sf::Sprite sprite;
     bool alive = true;
     PickupType pickupType;
-    AudioManager audio;
+    AudioManager& audio;
 };

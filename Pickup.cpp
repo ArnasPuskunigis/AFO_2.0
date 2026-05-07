@@ -7,7 +7,6 @@ Pickup::Pickup(float x, float y, sf::Texture &texture, PickupType type, AudioMan
     sprite.setScale(0.03f, 0.03f);
     sprite.setPosition(x, y);
     pickupType = type;
-	audio = audioManager;
 }
 
 void Pickup::checkForPlayerCollision(Player &player)
