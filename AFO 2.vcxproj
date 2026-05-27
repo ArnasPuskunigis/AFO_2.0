@@ -132,6 +132,7 @@
   <ItemGroup>
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="Button.h" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Pickup.cpp" />
@@ -179,7 +180,7 @@
     <Image Include="2D\The HealthBar.png" />
   </ItemGroup>
   <ItemGroup>
-    <Font Include="2D\Glitch inside.otf" />
+    <Font Include="2D\GlitchInside.otf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

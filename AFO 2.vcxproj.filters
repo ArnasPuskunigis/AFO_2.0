@@ -39,6 +39,9 @@
     <ClCompile Include="AudioManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Button.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bullet.h">
@@ -150,7 +153,7 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <Font Include="2D\Glitch inside.otf">
+    <Font Include="2D\GlitchInside.otf">
       <Filter>2D</Filter>
     </Font>
   </ItemGroup>

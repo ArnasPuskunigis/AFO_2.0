@@ -7,11 +7,15 @@
 #include "Bullet.h"
 #include <math.h>
 #include "AudioManager.h"
+#include "Button.h"
 
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(1400, 1000), "AFO 2.0");
     window.setFramerateLimit(60);
+
+    enum class GameState { Menu, Playing };
+    GameState state = GameState::Menu;
 
     // textures
     sf::Texture backgroundTexture;
@@ -50,6 +54,27 @@ int main()
     music.setVolume(50);
     music.play();
 
+    sf::Font font;
+    font.loadFromFile("2D/GlitchInside.otf"); // grab a free .ttf and drop it in your project folder
+
+    sf::Text titleText;
+    titleText.setFont(font);
+    titleText.setString("AFO 2.0");
+    titleText.setCharacterSize(80);
+    titleText.setFillColor(sf::Color::White);
+    titleText.setPosition(500.f, 200.f);
+
+    sf::Text startText;
+    startText.setFont(font);
+    startText.setString("Press ENTER to Play");
+    startText.setCharacterSize(40);
+    startText.setFillColor(sf::Color::Cyan);
+    startText.setPosition(480.f, 500.f);
+
+    // buttons
+    Button playButton(500.f, 450.f, 200.f, 60.f, font, "Play");
+    Button quitButton(500.f, 540.f, 200.f, 60.f, font, "Quit");
+
 	// game objects
     Player player(playerTexture);
     std::vector<Bullet> bullets;
@@ -67,22 +92,39 @@ int main()
     while (window.isOpen())
     {
         float deltaTime = clock.restart().asSeconds();
-
         sf::Event event;
+
+        playButton.update(window);
+        quitButton.update(window);
+
         while (window.pollEvent(event))
         {
-
             if (event.type == sf::Event::Closed)
-            {
                 window.close();
-                std::cout << "Game was closed!" << std::endl;
-            }
 
             if (event.type == sf::Event::KeyPressed)
+            {
                 if (event.key.code == sf::Keyboard::Escape)
                     window.close();
 
-            if (event.type == sf::Event::MouseButtonPressed)
+                // enter key starts the game
+                if (state == GameState::Menu && event.key.code == sf::Keyboard::Return)
+                    state = GameState::Playing;
+            }
+            
+            // buttons
+
+            if (state == GameState::Menu)
+            {
+                if (playButton.isClicked(window, event))
+                    state = GameState::Playing;
+                if (quitButton.isClicked(window, event))
+                    window.close();
+            }
+            
+
+            // only shoot when playing
+            if (state == GameState::Playing && event.type == sf::Event::MouseButtonPressed)
             {
                 if (event.mouseButton.button == sf::Mouse::Left)
                 {
@@ -95,59 +137,43 @@ int main()
                         sf::Vector2f direction = mousePos - spawnPos;
                         float angle = std::atan2(direction.y, direction.x) * (180.f / 3.14159f);
                         bullets.push_back(Bullet(spawnPos.x, spawnPos.y, angle, bulletTexture));
-
-                        
-						audioManager.play("playerLaser", 10);
-                    }
-                    else{
-                        std::cout << "You have no ammo left! Pick up some of those blue ammo crates" << std::endl;
+                        audioManager.play("playerLaser", 10);
                     }
                 }
             }
         }
 
-        player.update(deltaTime, enemies);
-
-        for (Bullet &bullet : bullets)
-            bullet.update(deltaTime);
-
-        for (auto& enemy : enemies)
-            enemy->update(deltaTime, bullets);
-
-        for (auto& pickup : pickups)
-            pickup->update(deltaTime, player);
-
-        bullets.erase(
-            std::remove_if(bullets.begin(), bullets.end(),
-                           [](const Bullet &bullet)
-                           { return !bullet.isAlive(); }),
-            bullets.end());
-
-        enemies.erase(
-            std::remove_if(enemies.begin(), enemies.end(),
-                [](const std::unique_ptr<Enemy>& enemy)
-                { return !enemy->isAlive(); }),
-            enemies.end());
-
-        pickups.erase(
-            std::remove_if(pickups.begin(), pickups.end(),
-                [](const std::unique_ptr<Pickup>& pickup)
-                { return !pickup->isAlive(); }),
-            pickups.end());
-
         window.clear(sf::Color::Black);
         window.draw(backgroundSprite);
 
-        for (Bullet &bullet : bullets)
-            bullet.draw(window);
+        if (state == GameState::Menu)
+        {
+            playButton.draw(window);
+            quitButton.draw(window);
 
-        for (auto& enemy : enemies)
-            enemy->draw(window);
+            window.draw(titleText);
+            window.draw(startText);
+        }
+        else if (state == GameState::Playing)
+        {
+            // all your existing update logic
+            player.update(deltaTime, enemies);
+            for (Bullet& bullet : bullets) bullet.update(deltaTime);
+            for (auto& enemy : enemies) enemy->update(deltaTime, bullets);
+            for (auto& pickup : pickups) pickup->update(deltaTime, player);
 
-        for (auto& pickup : pickups)
-            pickup->draw(window);
+            bullets.erase(std::remove_if(bullets.begin(), bullets.end(),
+                [](const Bullet& b) { return !b.isAlive(); }), bullets.end());
+            enemies.erase(std::remove_if(enemies.begin(), enemies.end(),
+                [](const std::unique_ptr<Enemy>& e) { return !e->isAlive(); }), enemies.end());
+            pickups.erase(std::remove_if(pickups.begin(), pickups.end(),
+                [](const std::unique_ptr<Pickup>& p) { return !p->isAlive(); }), pickups.end());
 
-        player.draw(window);
+            for (Bullet& bullet : bullets) bullet.draw(window);
+            for (auto& enemy : enemies) enemy->draw(window);
+            for (auto& pickup : pickups) pickup->draw(window);
+            player.draw(window);
+        }
 
         window.display();
     }
