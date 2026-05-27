@@ -112,7 +112,7 @@
     <Image Include="2D\BulletBlue.png">
       <Filter>2D</Filter>
     </Image>
-    <Image Include="2D\Button Imporved hi res.png">
+    <Image Include="2D\ButtonTexture.png">
       <Filter>2D</Filter>
     </Image>
     <Image Include="2D\Defender.png">

@@ -14,13 +14,24 @@ int main()
     sf::RenderWindow window(sf::VideoMode(1400, 1000), "AFO 2.0");
     window.setFramerateLimit(60);
 
-    enum class GameState { Menu, Playing };
+    enum class GameState { Menu, HowToPlay, Playing };
     GameState state = GameState::Menu;
 
     // textures
+
+    // ui
+    sf::Texture buttonTexture;
+    buttonTexture.loadFromFile("2D/ButtonTexture.png");
+
+    sf::Texture howToPlayTexture;
+    howToPlayTexture.loadFromFile("2D/HowToPlayMenu-01.png");
+    sf::Sprite howToPlaySprite;
+    howToPlaySprite.setTexture(howToPlayTexture);
+    howToPlaySprite.setScale(0.1f, 0.1f);
+
+    // gameplay
     sf::Texture backgroundTexture;
     backgroundTexture.loadFromFile("2D/SpaceBackground4K.png");
-
     sf::Sprite backgroundSprite;
     backgroundSprite.setTexture(backgroundTexture);
 
@@ -34,6 +45,7 @@ int main()
     ammoTexture.loadFromFile("2D/AmmoCrate.png");
     sf::Texture healthTexture;
     healthTexture.loadFromFile("2D/HealthBox.png");
+    
 
 	// audio manager
 	AudioManager audioManager;
@@ -59,21 +71,16 @@ int main()
 
     sf::Text titleText;
     titleText.setFont(font);
-    titleText.setString("AFO 2.0");
+    titleText.setString("ALL FOR ONE 2.0");
     titleText.setCharacterSize(80);
     titleText.setFillColor(sf::Color::White);
     titleText.setPosition(500.f, 200.f);
 
-    sf::Text startText;
-    startText.setFont(font);
-    startText.setString("Press ENTER to Play");
-    startText.setCharacterSize(40);
-    startText.setFillColor(sf::Color::Cyan);
-    startText.setPosition(480.f, 500.f);
-
     // buttons
-    Button playButton(500.f, 450.f, 200.f, 60.f, font, "Play");
-    Button quitButton(500.f, 540.f, 200.f, 60.f, font, "Quit");
+    Button playButton(500.f, 450.f, 200.f, 100.f, font, "Play", buttonTexture);
+    Button htpButton(450.f, 560.f, 300.f, 100.f, font, "How To Play", buttonTexture);
+    Button quitButton(500.f, 670.f, 200.f, 100.f, font, "Quit", buttonTexture);
+    Button exitButton(800, 800.f, 200.f, 100.f, font, "Exit", buttonTexture);
 
 	// game objects
     Player player(playerTexture);
@@ -95,10 +102,14 @@ int main()
         sf::Event event;
 
         playButton.update(window);
+        htpButton.update(window);
         quitButton.update(window);
+        exitButton.update(window);
 
         while (window.pollEvent(event))
         {
+
+            // closing the gamne with Escape
             if (event.type == sf::Event::Closed)
                 window.close();
 
@@ -106,24 +117,29 @@ int main()
             {
                 if (event.key.code == sf::Keyboard::Escape)
                     window.close();
-
-                // enter key starts the game
-                if (state == GameState::Menu && event.key.code == sf::Keyboard::Return)
-                    state = GameState::Playing;
             }
             
-            // buttons
+            // menu state mouse button clicks
 
             if (state == GameState::Menu)
             {
                 if (playButton.isClicked(window, event))
                     state = GameState::Playing;
+                if (htpButton.isClicked(window, event))
+                    state = GameState::HowToPlay;
                 if (quitButton.isClicked(window, event))
                     window.close();
             }
-            
 
-            // only shoot when playing
+            // how to play state mouse button clicks
+            if (state == GameState::HowToPlay)
+            {
+                if (exitButton.isClicked(window, event))
+                    state = GameState::Menu;
+            }
+
+            // play state mouse button clicks
+            // shooting
             if (state == GameState::Playing && event.type == sf::Event::MouseButtonPressed)
             {
                 if (event.mouseButton.button == sf::Mouse::Left)
@@ -148,11 +164,15 @@ int main()
 
         if (state == GameState::Menu)
         {
-            playButton.draw(window);
-            quitButton.draw(window);
-
             window.draw(titleText);
-            window.draw(startText);
+            playButton.draw(window);
+            htpButton.draw(window);
+            quitButton.draw(window);
+        }
+        if (state == GameState::HowToPlay)
+        {
+            window.draw(howToPlaySprite);
+            exitButton.draw(window);
         }
         else if (state == GameState::Playing)
         {

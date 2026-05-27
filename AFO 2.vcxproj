@@ -165,7 +165,7 @@
     <Image Include="2D\Bullet Icon.png" />
     <Image Include="2D\Bullet.png" />
     <Image Include="2D\BulletBlue.png" />
-    <Image Include="2D\Button Imporved hi res.png" />
+    <Image Include="2D\ButtonTexture.png" />
     <Image Include="2D\Defender.png" />
     <Image Include="2D\Enemy.png" />
     <Image Include="2D\HealthBox.png" />

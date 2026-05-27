@@ -6,8 +6,12 @@
 class Button
 {
 public:
-    Button(float x, float y, float width, float height, sf::Font& font, std::string text)
+    Button(float x, float y, float width, float height, sf::Font& font, std::string text, sf::Texture texture)
     {
+        this->texture = texture;
+        sprite.setTexture(this->texture);
+        sprite.setPosition(x, y);
+        sprite.setScale(width / sprite.getLocalBounds().width, height / sprite.getLocalBounds().height); // stretch to fit
         box.setPosition(x, y);
         box.setSize({ width, height });
         box.setFillColor(sf::Color(50, 50, 50));
@@ -20,7 +24,7 @@ public:
         // centre the text inside the box
         label.setPosition(
             x + (width - label.getLocalBounds().width) / 2,
-            y + (height - label.getLocalBounds().height) / 2
+            y + ((height - label.getLocalBounds().height) / 2) - 10
         );
     }
 
@@ -45,11 +49,13 @@ public:
 
     void draw(sf::RenderWindow& window)
     {
-        window.draw(box);
+        window.draw(sprite);
         window.draw(label);
     }
 
 private:
     sf::RectangleShape box;
     sf::Text label;
+    sf::Sprite sprite;
+    sf::Texture texture;
 };
