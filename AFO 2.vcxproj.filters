@@ -86,7 +86,7 @@
     <None Include="Audio\lowThreeTone.ogg">
       <Filter>Audio</Filter>
     </None>
-    <None Include="Audio\menu music.ogg">
+    <None Include="Audio\menuMusic.ogg">
       <Filter>Audio</Filter>
     </None>
     <None Include="Audio\thrusterFire_003.ogg">

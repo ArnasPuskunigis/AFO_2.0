@@ -40,6 +40,15 @@ int main()
 	audioManager.load("enemyExplosion", "Audio/explosionCrunch_000.ogg");
     audioManager.load("playerExplosion", "Audio/explosionCrunch_001.ogg");
 
+    // music
+    sf::SoundBuffer musicBuffer;
+    if (!musicBuffer.loadFromFile("Audio/menuMusic.ogg"))
+        return -1;
+    sf::Sound music;
+    music.setBuffer(musicBuffer);
+    music.setLoop(true);
+    music.setVolume(50);
+    music.play();
 
 	// game objects
     Player player(playerTexture);

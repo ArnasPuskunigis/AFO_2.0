@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v145</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -154,7 +154,7 @@
     <None Include="Audio\laserSmall_001.ogg" />
     <None Include="Audio\lowDown.ogg" />
     <None Include="Audio\lowThreeTone.ogg" />
-    <None Include="Audio\menu music.ogg" />
+    <None Include="Audio\menuMusic.ogg" />
     <None Include="Audio\thrusterFire_003.ogg" />
     <None Include="README.md" />
   </ItemGroup>
