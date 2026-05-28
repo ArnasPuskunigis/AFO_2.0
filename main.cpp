@@ -9,13 +9,72 @@
 #include "AudioManager.h"
 #include "Button.h"
 
+enum anchorEnum
+{
+    Middle, TopLeft, TopRight, BottomLeft, BottomRight
+};
+
+sf::Vector2f calculateAnchor(float width, float height, sf::RenderWindow& window, anchorEnum anchor)
+{
+    float w = window.getSize().x;
+    float h = window.getSize().y;
+
+    switch (anchor)
+    {
+    case anchorEnum::Middle:
+        return sf::Vector2f((w / 2) - (width / 2), (h / 2) - (height / 2));
+    case anchorEnum::TopLeft:
+        return sf::Vector2f(0, 0);
+    case anchorEnum::TopRight:
+        return sf::Vector2f(w - width, 0);
+    case anchorEnum::BottomLeft:
+        return sf::Vector2f(0, h - height);
+    case anchorEnum::BottomRight:
+        return sf::Vector2f(w - width, h - height);
+    default:
+        return sf::Vector2f(0, 0);
+    }
+}
+
+void applyLetterbox(sf::RenderWindow& window, sf::View& view, float virtualWidth, float virtualHeight)
+{
+    float windowRatio = window.getSize().x / (float)window.getSize().y;
+    float viewRatio = virtualWidth / virtualHeight;
+
+    float sizeX = 1.f, sizeY = 1.f;
+    float posX = 0.f, posY = 0.f;
+
+    if (windowRatio >= viewRatio)
+    {
+        sizeX = viewRatio / windowRatio;
+        posX = (1.f - sizeX) / 2.f;
+    }
+    else
+    {
+        sizeY = windowRatio / viewRatio;
+        posY = (1.f - sizeY) / 2.f;
+    }
+
+    view.setViewport(sf::FloatRect(posX, posY, sizeX, sizeY));
+    window.setView(view);
+}
+
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(1400, 1000), "AFO 2.0");
+    sf::RenderWindow window(sf::VideoMode(1920, 1080), "AFO 2.0");
     window.setFramerateLimit(60);
+
+    const float VIRTUAL_W = 1920.f;
+    const float VIRTUAL_H = 1080.f;
+
+    sf::View view(sf::FloatRect(0, 0, VIRTUAL_W, VIRTUAL_H));
+    applyLetterbox(window, view, VIRTUAL_W, VIRTUAL_H);
 
     enum class GameState { Menu, HowToPlay, Playing };
     GameState state = GameState::Menu;
+
+    // base anchor
+    sf::Vector2f anchor;
 
     // textures
 
@@ -27,7 +86,7 @@ int main()
     howToPlayTexture.loadFromFile("2D/HowToPlayMenu-01.png");
     sf::Sprite howToPlaySprite;
     howToPlaySprite.setTexture(howToPlayTexture);
-    howToPlaySprite.setScale(0.1f, 0.1f);
+    howToPlaySprite.setScale(0.15f, 0.15f);
 
     // gameplay
     sf::Texture backgroundTexture;
@@ -72,15 +131,24 @@ int main()
     sf::Text titleText;
     titleText.setFont(font);
     titleText.setString("ALL FOR ONE 2.0");
-    titleText.setCharacterSize(80);
+    titleText.setCharacterSize(120);
     titleText.setFillColor(sf::Color::White);
-    titleText.setPosition(500.f, 200.f);
+
+    sf::FloatRect bounds = titleText.getLocalBounds();
+    sf::Vector2f pos = calculateAnchor(bounds.width, bounds.height, window, Middle);
+    titleText.setPosition(pos.x, 200);
+
+
 
     // buttons
-    Button playButton(500.f, 450.f, 200.f, 100.f, font, "Play", buttonTexture);
-    Button htpButton(450.f, 560.f, 300.f, 100.f, font, "How To Play", buttonTexture);
-    Button quitButton(500.f, 670.f, 200.f, 100.f, font, "Quit", buttonTexture);
-    Button exitButton(800, 800.f, 200.f, 100.f, font, "Exit", buttonTexture);
+    anchor = calculateAnchor(200, 100, window, Middle);
+    Button playButton(anchor.x, 450.f, 200.f, 100.f, font, "Play", buttonTexture);
+    Button quitButton(anchor.x, 670.f, 200.f, 100.f, font, "Quit", buttonTexture);
+    
+    anchor = calculateAnchor(300, 100, window, Middle);
+    Button htpButton(anchor.x, 560.f, 300.f, 100.f, font, "How To Play", buttonTexture);
+    anchor = calculateAnchor(200, 100, window, BottomRight);
+    Button exitButton(anchor.x, anchor.y, 200.f, 100.f, font, "Exit", buttonTexture);
 
 	// game objects
     Player player(playerTexture);
@@ -108,6 +176,8 @@ int main()
 
         while (window.pollEvent(event))
         {
+            if (event.type == sf::Event::Resized)
+                applyLetterbox(window, view, VIRTUAL_W, VIRTUAL_H);
 
             // closing the gamne with Escape
             if (event.type == sf::Event::Closed)
@@ -159,8 +229,12 @@ int main()
             }
         }
 
-        window.clear(sf::Color::Black);
+        window.clear(sf::Color::Black); // bars stay black
+        window.setView(view);
         window.draw(backgroundSprite);
+
+        //window.clear(sf::Color::Black);
+        //window.draw(backgroundSprite);
 
         if (state == GameState::Menu)
         {
@@ -197,4 +271,5 @@ int main()
 
         window.display();
     }
+
 }
