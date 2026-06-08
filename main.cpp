@@ -70,11 +70,15 @@ int main()
     sf::View view(sf::FloatRect(0, 0, VIRTUAL_W, VIRTUAL_H));
     applyLetterbox(window, view, VIRTUAL_W, VIRTUAL_H);
 
-    enum class GameState { Menu, HowToPlay, Playing };
+    enum class GameState { Menu, HowToPlay, Playing, Paused };
     GameState state = GameState::Menu;
 
     // base anchor
     sf::Vector2f anchor;
+
+    // font
+    sf::Font font;
+    font.loadFromFile("2D/GlitchInside.otf");
 
     // textures
 
@@ -87,6 +91,13 @@ int main()
     sf::Sprite howToPlaySprite;
     howToPlaySprite.setTexture(howToPlayTexture);
     howToPlaySprite.setScale(0.15f, 0.15f);
+
+    // HUD
+    sf::Texture pauseButtonTexture;
+    pauseButtonTexture.loadFromFile("2D/PauseButton.png");
+
+    anchor = calculateAnchor(100, 100, window, TopRight);
+    Button pauseButton(anchor.x, anchor.y, 100.f, 100.f, font, "", pauseButtonTexture);
 
     // gameplay
     sf::Texture backgroundTexture;
@@ -125,8 +136,7 @@ int main()
     music.setVolume(50);
     music.play();
 
-    sf::Font font;
-    font.loadFromFile("2D/GlitchInside.otf"); // grab a free .ttf and drop it in your project folder
+
 
     sf::Text titleText;
     titleText.setFont(font);
@@ -173,6 +183,8 @@ int main()
         htpButton.update(window);
         quitButton.update(window);
         exitButton.update(window);
+        pauseButton.update(window);
+
 
         while (window.pollEvent(event))
         {
@@ -209,9 +221,9 @@ int main()
             }
 
             // play state mouse button clicks
-            // shooting
             if (state == GameState::Playing && event.type == sf::Event::MouseButtonPressed)
             {
+                // shooting
                 if (event.mouseButton.button == sf::Mouse::Left)
                 {
                     if (player.getAmmo() >= 1)
@@ -226,15 +238,19 @@ int main()
                         audioManager.play("playerLaser", 10);
                     }
                 }
+
+                // pause
+                if (pauseButton.isClicked(window, event) || event.KeyPressed == sf::Keyboard::P)
+                {
+                    std::cout << "Paused" << std::endl;
+                    //state = GameState::Paused;
+                }
             }
         }
 
-        window.clear(sf::Color::Black); // bars stay black
+        window.clear(sf::Color::Black);
         window.setView(view);
         window.draw(backgroundSprite);
-
-        //window.clear(sf::Color::Black);
-        //window.draw(backgroundSprite);
 
         if (state == GameState::Menu)
         {
@@ -250,7 +266,6 @@ int main()
         }
         else if (state == GameState::Playing)
         {
-            // all your existing update logic
             player.update(deltaTime, enemies);
             for (Bullet& bullet : bullets) bullet.update(deltaTime);
             for (auto& enemy : enemies) enemy->update(deltaTime, bullets);
@@ -267,6 +282,9 @@ int main()
             for (auto& enemy : enemies) enemy->draw(window);
             for (auto& pickup : pickups) pickup->draw(window);
             player.draw(window);
+            
+            // HUD
+            pauseButton.draw(window);
         }
 
         window.display();
