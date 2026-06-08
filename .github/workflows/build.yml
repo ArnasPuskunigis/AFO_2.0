@@ -20,4 +20,4 @@ jobs:
           vs-version: '[17.0,)'
 
       - name: Build solution
-        run: msbuild "AFO 2.slnx" /p:Configuration=Release /p:PlatformToolset=v143
+        run: msbuild "AFO2.slnx" /p:Configuration=Release /p:PlatformToolset=v143
