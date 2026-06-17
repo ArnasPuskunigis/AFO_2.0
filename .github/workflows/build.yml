@@ -19,7 +19,12 @@ jobs:
           git clone https://github.com/microsoft/vcpkg.git
           .\vcpkg\bootstrap-vcpkg.bat
           .\vcpkg\vcpkg install sfml:x64-windows
+          .\vcpkg\vcpkg integrate install
 
+      - name: Set VCPKG_ROOT
+        run: |
+          echo "VCPKG_ROOT=${{ github.workspace }}\vcpkg" >> $env:GITHUB_ENV  
+      
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1.1
         with:
