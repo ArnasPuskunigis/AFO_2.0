@@ -30,7 +30,7 @@ jobs:
 
       - name: Install SFML
         if: steps.cache-vcpkg.outputs.cache-hit != 'true'
-        run: ${{ github.workspace }}/vcpkg/vcpkg install sfml:x64-windows
+        run: ${{ github.workspace }}/vcpkg/vcpkg install --triplet x64-windows
 
       - name: Configure CMake
         run: |
