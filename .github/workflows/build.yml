@@ -18,11 +18,13 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ github.workspace }}/vcpkg
-          key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}
+          key: vcpkg-${{ runner.os }}-2024.04.26-${{ hashFiles('vcpkg.json') }}
 
       - name: Clone vcpkg
         if: steps.cache-vcpkg.outputs.cache-hit != 'true'
-        run: git clone https://github.com/microsoft/vcpkg.git ${{ github.workspace }}/vcpkg
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git ${{ github.workspace }}/vcpkg
+          git -C ${{ github.workspace }}/vcpkg checkout 2024.04.26
 
       - name: Bootstrap vcpkg
         if: steps.cache-vcpkg.outputs.cache-hit != 'true'
