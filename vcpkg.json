@@ -2,6 +2,15 @@
   "name": "afo-game",
   "version": "0.1.0",
   "dependencies": [
-    "sfml"
+    {
+      "name": "sfml",
+      "version>=": "2.6.1"
+    }
+  ],
+  "overrides": [
+    {
+      "name": "sfml",
+      "version": "2.6.1"
+    }
   ]
 }

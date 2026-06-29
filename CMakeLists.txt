@@ -3,7 +3,7 @@ project(MyGame)
 
 set(CMAKE_CXX_STANDARD 17)
 
-find_package(SFML COMPONENTS Network Graphics Window Audio System CONFIG REQUIRED)
+find_package(SFML 2.6 COMPONENTS graphics audio window system network REQUIRED)
 
 add_executable(MyGame
     main.cpp
@@ -14,9 +14,9 @@ add_executable(MyGame
     Player.cpp
 )
 target_link_libraries(MyGame PRIVATE
-    SFML::Graphics
-    SFML::Audio
-    SFML::Window
-    SFML::System
-    SFML::Network
+    sfml-graphics
+    sfml-audio
+    sfml-window
+    sfml-system
+    sfml-network
 )
