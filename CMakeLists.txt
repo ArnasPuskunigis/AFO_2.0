@@ -3,9 +3,15 @@ project(MyGame)
 
 set(CMAKE_CXX_STANDARD 17)
 
-find_package(SFML 2.6 COMPONENTS graphics audio window system network REQUIRED)
+include(FetchContent)
+FetchContent_Declare(
+    SFML
+    GIT_REPOSITORY https://github.com/SFML/SFML.git
+    GIT_TAG        2.6.1
+)
+FetchContent_MakeAvailable(SFML)
 
-add_executable(MyGame
+cmakeadd_executable(MyGame
     main.cpp
     AudioManager.cpp
     Bullet.cpp
@@ -13,6 +19,7 @@ add_executable(MyGame
     Pickup.cpp
     Player.cpp
 )
+
 target_link_libraries(MyGame PRIVATE
     sfml-graphics
     sfml-audio
