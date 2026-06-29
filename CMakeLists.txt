@@ -11,7 +11,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(SFML)
 
-cmakeadd_executable(MyGame
+add_executable(MyGame
     main.cpp
     AudioManager.cpp
     Bullet.cpp
