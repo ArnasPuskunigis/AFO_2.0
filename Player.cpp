@@ -1,17 +1,39 @@
 #include "Player.h"
 #include <iostream>
 
-Player::Player(sf::Texture& texture) {
+Player::Player(sf::Texture& texture, EventSystem& events)
+    : events(events), health(maxHealth), ammo(maxAmmo) {
     sprite.setTexture(texture);
+    setupEventListeners();
     sprite.setScale(0.2f, 0.2f);
     health = maxHealth;
     ammo = maxAmmo;
+    score = 0;
 }
 
 sf::Vector2f Player::getWeaponPosition()
 {
     sf::FloatRect bounds = sprite.getGlobalBounds();
     return sf::Vector2f(bounds.left + bounds.width / 2.f, bounds.top  + bounds.height);
+}
+
+void Player::setupEventListeners() {
+    events.subscribe(GameEvent::EnemyKilled, [this]() {
+        addScore(1);
+        });
+
+    events.subscribe(GameEvent::PlayerHit, [this]() {
+        takeDamage();
+        });
+}
+
+void Player::addScore(int amount) {
+    score += amount;
+}
+
+
+int Player::getScore() {
+    return score;
 }
 
 void Player::handleInput(float deltaTime) {

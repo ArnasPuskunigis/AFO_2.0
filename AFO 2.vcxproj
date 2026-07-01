@@ -134,6 +134,7 @@
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Button.h" />
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="EventSystem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Pickup.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -142,6 +143,7 @@
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="EventSystem.h" />
     <ClInclude Include="Pickup.h" />
     <ClInclude Include="Player.h" />
   </ItemGroup>

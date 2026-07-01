@@ -8,6 +8,7 @@
 #include <math.h>
 #include "AudioManager.h"
 #include "Button.h"
+#include "EventSystem.h"
 
 enum anchorEnum
 {
@@ -67,39 +68,28 @@ int main()
     const float VIRTUAL_W = 1920.f;
     const float VIRTUAL_H = 1080.f;
 
+    EventSystem events;
+    int playerScore = 0;
+
     sf::View view(sf::FloatRect(0, 0, VIRTUAL_W, VIRTUAL_H));
     applyLetterbox(window, view, VIRTUAL_W, VIRTUAL_H);
 
     enum class GameState { Menu, HowToPlay, Playing, Paused };
     GameState state = GameState::Menu;
 
+
+
     // base anchor
     sf::Vector2f anchor;
+    sf::FloatRect bounds;
+    sf::Vector2f pos;
 
     // font
     sf::Font font;
     font.loadFromFile("2D/GlitchInside.otf");
 
-    // textures
+    // game textures
 
-    // ui
-    sf::Texture buttonTexture;
-    buttonTexture.loadFromFile("2D/ButtonTexture.png");
-
-    sf::Texture howToPlayTexture;
-    howToPlayTexture.loadFromFile("2D/HowToPlayMenu-01.png");
-    sf::Sprite howToPlaySprite;
-    howToPlaySprite.setTexture(howToPlayTexture);
-    howToPlaySprite.setScale(0.15f, 0.15f);
-
-    // HUD
-    sf::Texture pauseButtonTexture;
-    pauseButtonTexture.loadFromFile("2D/PauseButton.png");
-
-    anchor = calculateAnchor(100, 100, window, TopRight);
-    Button pauseButton(anchor.x, anchor.y, 100.f, 100.f, font, "", pauseButtonTexture);
-
-    // gameplay
     sf::Texture backgroundTexture;
     backgroundTexture.loadFromFile("2D/SpaceBackground4K.png");
     sf::Sprite backgroundSprite;
@@ -115,7 +105,68 @@ int main()
     ammoTexture.loadFromFile("2D/AmmoCrate.png");
     sf::Texture healthTexture;
     healthTexture.loadFromFile("2D/HealthBox.png");
-    
+
+    // game objects
+    Player player(playerTexture, events);
+    std::vector<Bullet> bullets;
+
+    std::vector<std::unique_ptr<Enemy>> enemies;
+    std::vector<std::unique_ptr<Pickup>> pickups;
+
+    // ui + textures
+
+    sf::Text titleText;
+    titleText.setFont(font);
+    titleText.setString("ALL FOR ONE 2.0");
+    titleText.setCharacterSize(120);
+    titleText.setFillColor(sf::Color::White);
+
+    bounds = titleText.getLocalBounds();
+    pos = calculateAnchor(bounds.width, bounds.height, window, Middle);
+    titleText.setPosition(pos.x, 200);
+
+    sf::Texture buttonTexture;
+    buttonTexture.loadFromFile("2D/ButtonTexture.png");
+
+    sf::Texture howToPlayTexture;
+    howToPlayTexture.loadFromFile("2D/HowToPlayMenu-01.png");
+    sf::Sprite howToPlaySprite;
+    howToPlaySprite.setTexture(howToPlayTexture);
+    howToPlaySprite.setScale(0.15f, 0.15f);
+
+    // buttons
+    anchor = calculateAnchor(200, 100, window, Middle);
+    Button playButton(anchor.x, 450.f, 200.f, 100.f, font, "Play", buttonTexture);
+    Button quitButton(anchor.x, 670.f, 200.f, 100.f, font, "Quit", buttonTexture);
+
+    anchor = calculateAnchor(300, 100, window, Middle);
+    Button htpButton(anchor.x, 560.f, 300.f, 100.f, font, "How To Play", buttonTexture);
+    anchor = calculateAnchor(200, 100, window, BottomRight);
+    Button exitButton(anchor.x, anchor.y, 200.f, 100.f, font, "Exit", buttonTexture);
+
+    // HUD
+    sf::Texture pauseButtonTexture;
+    pauseButtonTexture.loadFromFile("2D/PauseButton.png");
+
+    anchor = calculateAnchor(100, 100, window, TopRight);
+    Button pauseButton(anchor.x, anchor.y, 100.f, 100.f, font, "", pauseButtonTexture);
+
+    sf::Texture scoreTexture;
+    scoreTexture.loadFromFile("2D/BorderForIcons.png");
+    sf::Sprite scoreSprite;
+    scoreSprite.setTexture(scoreTexture);
+    anchor = calculateAnchor(200, 130, window, BottomRight);
+    scoreSprite.setPosition(anchor);
+    scoreSprite.setScale(0.05f, 0.05f);
+
+    sf::Text scoreText;
+    scoreText.setFont(font);
+    scoreText.setString(std::to_string(player.getScore()));
+    scoreText.setCharacterSize(60);
+    scoreText.setFillColor(sf::Color::Black);
+
+    pos = calculateAnchor(120, 110, window, BottomRight);
+    scoreText.setPosition(pos.x, pos.y);
 
 	// audio manager
 	AudioManager audioManager;
@@ -137,40 +188,14 @@ int main()
     music.play();
 
 
+   
 
-    sf::Text titleText;
-    titleText.setFont(font);
-    titleText.setString("ALL FOR ONE 2.0");
-    titleText.setCharacterSize(120);
-    titleText.setFillColor(sf::Color::White);
-
-    sf::FloatRect bounds = titleText.getLocalBounds();
-    sf::Vector2f pos = calculateAnchor(bounds.width, bounds.height, window, Middle);
-    titleText.setPosition(pos.x, 200);
-
-
-
-    // buttons
-    anchor = calculateAnchor(200, 100, window, Middle);
-    Button playButton(anchor.x, 450.f, 200.f, 100.f, font, "Play", buttonTexture);
-    Button quitButton(anchor.x, 670.f, 200.f, 100.f, font, "Quit", buttonTexture);
-    
-    anchor = calculateAnchor(300, 100, window, Middle);
-    Button htpButton(anchor.x, 560.f, 300.f, 100.f, font, "How To Play", buttonTexture);
-    anchor = calculateAnchor(200, 100, window, BottomRight);
-    Button exitButton(anchor.x, anchor.y, 200.f, 100.f, font, "Exit", buttonTexture);
-
-	// game objects
-    Player player(playerTexture);
-    std::vector<Bullet> bullets;
-
-    std::vector<std::unique_ptr<Enemy>> enemies;
-    std::vector<std::unique_ptr<Pickup>> pickups;
+	
 
     // clock for deltatime
     sf::Clock clock;
 
-    enemies.push_back(std::make_unique<Enemy>(600.0f, 600.0f, enemyTexture, audioManager));
+    enemies.push_back(std::make_unique<Enemy>(600.0f, 600.0f, enemyTexture, audioManager, events));
     pickups.push_back(std::make_unique<Pickup>(10.0f, 600.0f, ammoTexture, PickupType::Ammo, audioManager));
     pickups.push_back(std::make_unique<Pickup>(600.0f, 10.0f, healthTexture, PickupType::Health, audioManager));
 
@@ -284,7 +309,10 @@ int main()
             player.draw(window);
             
             // HUD
+            scoreText.setString(std::to_string(player.getScore()));
             pauseButton.draw(window);
+            window.draw(scoreSprite);
+            window.draw(scoreText);
         }
 
         window.display();

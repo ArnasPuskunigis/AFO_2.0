@@ -3,12 +3,12 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-Enemy::Enemy(float x, float y, sf::Texture &texture, AudioManager& audioManager) : audio(audioManager)
+Enemy::Enemy(float x, float y, sf::Texture& texture, AudioManager& audioManager, EventSystem& events)
+    : audio(audioManager), events(events), health(20), alive(true)
 {
     sprite.setTexture(texture);
     sprite.setScale(0.2f, 0.2f);
     sprite.setPosition(x, y);
-	audio = audioManager;
 }
 
 void Enemy::checkForBulletCollisions(std::vector<Bullet>& bullets)
@@ -44,6 +44,7 @@ bool Enemy::isAlive() const {
 
 void Enemy::kill(){
     alive = false;
+    events.emit(GameEvent::EnemyKilled);
     std::cout << "This enemy ship has been destroyed" << std::endl;
 }
 
