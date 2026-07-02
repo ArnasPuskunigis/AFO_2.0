@@ -14,6 +14,7 @@ FetchContent_MakeAvailable(SFML)
 add_executable(MyGame
     main.cpp
     AudioManager.cpp
+    EventSystem.cpp
     Bullet.cpp
     Enemy.cpp
     Pickup.cpp
