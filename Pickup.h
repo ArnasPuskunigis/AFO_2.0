@@ -22,6 +22,8 @@ public:
 private:
     sf::Sprite sprite;
     bool alive = true;
+    float lifetime = 20.f;
+    float timer = 0.f;
     PickupType pickupType;
     AudioManager& audio;
 };

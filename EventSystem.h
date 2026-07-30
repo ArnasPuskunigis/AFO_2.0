@@ -7,6 +7,7 @@ enum class GameEvent {
     EnemyKilled,
     PlayerHit,
     BulletFired,
+    WaveStarted
 };
 
 class EventSystem {

@@ -39,6 +39,19 @@ void Pickup::kill(){
 
 void Pickup::update(float deltaTime, Player &player)
 {
+    timer += deltaTime;
+    if (timer >= lifetime)
+    {
+        alive = false;
+        return;
+    }
+
+    if (lifetime - timer < 3.f)
+    {
+        float flash = std::sin(timer * 10.f);
+        sprite.setColor(flash > 0 ? sf::Color::White : sf::Color(255, 255, 255, 100));
+    }
+
     checkForPlayerCollision(player);
 }
 

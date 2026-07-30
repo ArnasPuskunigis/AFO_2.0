@@ -60,6 +60,16 @@ void applyLetterbox(sf::RenderWindow& window, sf::View& view, float virtualWidth
     window.setView(view);
 }
 
+sf::Vector2f getSpawnPosition(sf::Vector2f playerPos, float minDist, float maxDist)
+{
+    float angle = (rand() % 360) * (3.14159f / 180.f);
+    float dist = minDist + (rand() % (int)(maxDist - minDist));
+    return sf::Vector2f(
+        playerPos.x + std::cos(angle) * dist,
+        playerPos.y + std::sin(angle) * dist
+    );
+}
+
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(1920, 1080), "AFO 2.0");
@@ -75,7 +85,12 @@ int main()
     sf::View camera(sf::FloatRect(0, 0, VIRTUAL_W, VIRTUAL_H));
     applyLetterbox(window, view, VIRTUAL_W, VIRTUAL_H);
 
-    enum class GameState { Menu, HowToPlay, Playing, Paused };
+    enum class GameState {
+        Menu, 
+        HowToPlay, 
+        Playing, 
+        Paused
+    };
     GameState state = GameState::Menu;
 
     // base anchor
@@ -112,6 +127,20 @@ int main()
 
     std::vector<std::unique_ptr<Enemy>> enemies;
     std::vector<std::unique_ptr<Pickup>> pickups;
+
+    // enemy spawner
+
+    float spawnTimer = 0.f;
+    float spawnInterval = 3.f;
+    int wave = 1;
+    int enemiesPerWave = 3;
+    int enemiesSpawned = 0;
+
+    // pickup spawner
+
+    float pickupSpawnTimer = 0.f;
+    float pickupSpawnInterval = 4.f;
+    int maxPickups = 5;
 
     // ui + textures
 
@@ -187,17 +216,12 @@ int main()
     music.setVolume(50);
     music.play();
 
-
-   
-
-	
-
     // clock for deltatime
     sf::Clock clock;
 
-    enemies.push_back(std::make_unique<Enemy>(600.0f, 600.0f, enemyTexture, audioManager, events));
-    pickups.push_back(std::make_unique<Pickup>(10.0f, 600.0f, ammoTexture, PickupType::Ammo, audioManager));
-    pickups.push_back(std::make_unique<Pickup>(600.0f, 10.0f, healthTexture, PickupType::Health, audioManager));
+    //enemies.push_back(std::make_unique<Enemy>(600.0f, 600.0f, enemyTexture, audioManager, events));
+    //pickups.push_back(std::make_unique<Pickup>(10.0f, 600.0f, ammoTexture, PickupType::Ammo, audioManager));
+    //pickups.push_back(std::make_unique<Pickup>(600.0f, 10.0f, healthTexture, PickupType::Health, audioManager));
 
     while (window.isOpen())
     {
@@ -307,8 +331,46 @@ int main()
             window.draw(backgroundSprite);
 
             player.update(deltaTime, enemies);
+            sf::Vector2f playerPos = player.getSprite().getPosition();
+
+            // spawning enemies
+            events.emit(GameEvent::WaveStarted);
+            spawnTimer += deltaTime;
+            if (spawnTimer >= spawnInterval && enemiesSpawned < enemiesPerWave)
+            {
+                spawnTimer = 0.f;
+                sf::Vector2f spawnPos = getSpawnPosition(player.getSprite().getPosition(), 1000.f, 1500.f);
+                enemies.push_back(std::make_unique<Enemy>(spawnPos.x, spawnPos.y, enemyTexture, audioManager, events));
+                enemiesSpawned++;
+            }
+            // spawning pickups
+
+            pickupSpawnTimer += deltaTime;
+            if (pickupSpawnTimer >= pickupSpawnInterval && (int)pickups.size() < maxPickups)
+            {
+                pickupSpawnTimer = 0.f;
+                sf::Vector2f spawnPos = getSpawnPosition(player.getSprite().getPosition(), 800.f, 1200.f);
+
+                // randomly pick health or ammo
+                if (rand() % 2 == 0)
+                    pickups.push_back(std::make_unique<Pickup>(spawnPos.x, spawnPos.y, ammoTexture, PickupType::Ammo, audioManager));
+                else
+                    pickups.push_back(std::make_unique<Pickup>(spawnPos.x, spawnPos.y, healthTexture, PickupType::Health, audioManager));
+            }
+
+            // start next wave when all enemies are dead
+            if (enemies.empty() && enemiesSpawned >= enemiesPerWave)
+            {
+                wave++;
+                enemiesPerWave += 2; // each wave gets harder
+                spawnInterval = std::max(1.f, spawnInterval - 0.2f);
+                enemiesSpawned = 0;
+                spawnTimer = 0.f;
+                std::cout << "Wave " << wave << " starting!" << std::endl;
+            }
+
             for (Bullet& bullet : bullets) bullet.update(deltaTime);
-            for (auto& enemy : enemies) enemy->update(deltaTime, bullets);
+            for (auto& enemy : enemies) enemy->update(deltaTime, bullets, playerPos);
             for (auto& pickup : pickups) pickup->update(deltaTime, player);
 
             bullets.erase(std::remove_if(bullets.begin(), bullets.end(),
@@ -324,7 +386,6 @@ int main()
             
             // Camera follows player
             player.draw(window);
-            sf::Vector2f playerPos = player.getSprite().getPosition();
             sf::Vector2f cameraPos = camera.getCenter();
             float lerpSpeed = 5.0f;
             sf::Vector2f newPos = cameraPos + (playerPos - cameraPos) * lerpSpeed * deltaTime;
@@ -336,10 +397,6 @@ int main()
             pauseButton.draw(window);
             window.draw(scoreSprite);
             window.draw(scoreText);
-        }
-        else if (state == GameState::Paused)
-        {
-
         }
 
         window.display();

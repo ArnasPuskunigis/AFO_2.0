@@ -3,8 +3,8 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-Enemy::Enemy(float x, float y, sf::Texture& texture, AudioManager& audioManager, EventSystem& events)
-    : audio(audioManager), events(events), health(20), alive(true)
+Enemy::Enemy(float x, float y, sf::Texture& texture, AudioManager& audioManager, EventSystem& events) 
+    : audio(audioManager), events(events)
 {
     sprite.setTexture(texture);
     sprite.setScale(0.2f, 0.2f);
@@ -48,8 +48,23 @@ void Enemy::kill(){
     std::cout << "This enemy ship has been destroyed" << std::endl;
 }
 
-void Enemy::update(float deltaTime, std::vector<Bullet>& bullets)
+void Enemy::update(float deltaTime, std::vector<Bullet>& bullets, sf::Vector2f playerPos)
 {
+    if (!alive) return;
+
+    // rotate to face player
+    sf::Vector2f direction = playerPos - sprite.getPosition();
+    float angle = std::atan2(direction.y, direction.x) * (180.f / 3.14159f);
+    sprite.setRotation(angle - 90.f);
+
+    // move towards player
+    float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+    if (length > 0)
+    {
+        sf::Vector2f normalized = direction / length;
+        sprite.move(normalized * speed * deltaTime);
+    }
+
     checkForBulletCollisions(bullets);
 }
 
