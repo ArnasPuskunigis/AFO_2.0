@@ -72,12 +72,11 @@ int main()
     int playerScore = 0;
 
     sf::View view(sf::FloatRect(0, 0, VIRTUAL_W, VIRTUAL_H));
+    sf::View camera(sf::FloatRect(0, 0, VIRTUAL_W, VIRTUAL_H));
     applyLetterbox(window, view, VIRTUAL_W, VIRTUAL_H);
 
     enum class GameState { Menu, HowToPlay, Playing, Paused };
     GameState state = GameState::Menu;
-
-
 
     // base anchor
     sf::Vector2f anchor;
@@ -93,6 +92,7 @@ int main()
     sf::Texture backgroundTexture;
     backgroundTexture.loadFromFile("2D/SpaceBackground4K.png");
     sf::Sprite backgroundSprite;
+    backgroundTexture.setRepeated(true);
     backgroundSprite.setTexture(backgroundTexture);
 
     sf::Texture bulletTexture;
@@ -256,7 +256,7 @@ int main()
                         player.shootBullet();
                         sf::Vector2f spawnPos = player.getWeaponPosition();
                         sf::Vector2i mouseRaw = sf::Mouse::getPosition(window);
-                        sf::Vector2f mousePos(mouseRaw.x, mouseRaw.y);
+                        sf::Vector2f mousePos = window.mapPixelToCoords(mouseRaw, camera);
                         sf::Vector2f direction = mousePos - spawnPos;
                         float angle = std::atan2(direction.y, direction.x) * (180.f / 3.14159f);
                         bullets.push_back(Bullet(spawnPos.x, spawnPos.y, angle, bulletTexture));
@@ -274,11 +274,12 @@ int main()
         }
 
         window.clear(sf::Color::Black);
-        window.setView(view);
+        window.setView(camera);
         window.draw(backgroundSprite);
 
         if (state == GameState::Menu)
         {
+            window.setView(view);
             window.draw(titleText);
             playButton.draw(window);
             htpButton.draw(window);
@@ -286,11 +287,25 @@ int main()
         }
         if (state == GameState::HowToPlay)
         {
+            window.setView(view);
             window.draw(howToPlaySprite);
             exitButton.draw(window);
         }
         else if (state == GameState::Playing)
         {
+            // Scrolling Background
+            window.setView(camera);
+            float parallaxSpeed = 0.2f;
+            sf::Vector2f camPos = camera.getCenter();
+            backgroundSprite.setTextureRect(sf::IntRect(
+                (int)(camPos.x * parallaxSpeed),
+                (int)(camPos.y * parallaxSpeed),
+                (int)VIRTUAL_W,
+                (int)VIRTUAL_H
+            ));
+            backgroundSprite.setPosition(camPos.x - VIRTUAL_W / 2, camPos.y - VIRTUAL_H / 2);
+            window.draw(backgroundSprite);
+
             player.update(deltaTime, enemies);
             for (Bullet& bullet : bullets) bullet.update(deltaTime);
             for (auto& enemy : enemies) enemy->update(deltaTime, bullets);
@@ -306,13 +321,25 @@ int main()
             for (Bullet& bullet : bullets) bullet.draw(window);
             for (auto& enemy : enemies) enemy->draw(window);
             for (auto& pickup : pickups) pickup->draw(window);
-            player.draw(window);
             
+            // Camera follows player
+            player.draw(window);
+            sf::Vector2f playerPos = player.getSprite().getPosition();
+            sf::Vector2f cameraPos = camera.getCenter();
+            float lerpSpeed = 5.0f;
+            sf::Vector2f newPos = cameraPos + (playerPos - cameraPos) * lerpSpeed * deltaTime;
+            camera.setCenter(newPos);
+
             // HUD
+            window.setView(view);
             scoreText.setString(std::to_string(player.getScore()));
             pauseButton.draw(window);
             window.draw(scoreSprite);
             window.draw(scoreText);
+        }
+        else if (state == GameState::Paused)
+        {
+
         }
 
         window.display();
