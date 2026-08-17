@@ -45,6 +45,9 @@
     <ClCompile Include="EventSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ShootingEnemy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bullet.h">
@@ -63,6 +66,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EventSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ShootingEnemy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -155,6 +161,12 @@
       <Filter>2D</Filter>
     </Image>
     <Image Include="2D\The HealthBar.png">
+      <Filter>2D</Filter>
+    </Image>
+    <Image Include="2D\BulletPurple.png">
+      <Filter>2D</Filter>
+    </Image>
+    <Image Include="2D\ShootingEnemy.png">
       <Filter>2D</Filter>
     </Image>
   </ItemGroup>

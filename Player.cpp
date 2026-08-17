@@ -1,4 +1,6 @@
 #include "Player.h"
+#include "Enemy.h"
+#include "Bullet.h"
 #include <iostream>
 
 Player::Player(sf::Texture& texture, EventSystem& events)
@@ -59,7 +61,7 @@ void Player::handleInput(float deltaTime) {
         }
 }
 
-void Player::checkForEnemyCollisions(std::vector<std::unique_ptr<Enemy>>& enemies){
+void Player::checkForEnemyCollisions(std::vector<std::unique_ptr<Enemy>>& enemies, std::vector<Bullet>& enemyBullets){
     sf::FloatRect bounds = sprite.getGlobalBounds();
 
     for (auto& enemy : enemies)
@@ -71,6 +73,17 @@ void Player::checkForEnemyCollisions(std::vector<std::unique_ptr<Enemy>>& enemie
             std::cout << "An enemy has hit the player!" << std::endl;
         }
     }
+
+    for (auto& enemyBullet : enemyBullets)
+    {
+        if (bounds.intersects(enemyBullet.getSprite().getGlobalBounds()))
+        {
+            enemyBullet.kill();
+            takeDamage();
+            std::cout << "An enemy has shot the player!" << std::endl;
+        }
+    }
+
 }
 
 void Player::shootBullet(){
@@ -116,8 +129,8 @@ void Player::receiveHealth(){
     std::cout << "Health: " << health << std::endl;
 }
 
-void Player::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies) {
-    checkForEnemyCollisions(enemies);
+void Player::update(float deltaTime, std::vector<std::unique_ptr<Enemy>>& enemies, std::vector<Bullet>& enemyBullets) {
+    checkForEnemyCollisions(enemies, enemyBullets);
     handleInput(deltaTime);
 }
 

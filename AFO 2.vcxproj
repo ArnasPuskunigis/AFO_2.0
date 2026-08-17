@@ -135,6 +135,7 @@
     <ClCompile Include="Button.h" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EventSystem.cpp" />
+    <ClCompile Include="ShootingEnemy.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Pickup.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -146,6 +147,7 @@
     <ClInclude Include="EventSystem.h" />
     <ClInclude Include="Pickup.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="ShootingEnemy.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Audio\doorOpen_000.ogg" />
@@ -167,6 +169,7 @@
     <Image Include="2D\Bullet Icon.png" />
     <Image Include="2D\Bullet.png" />
     <Image Include="2D\BulletBlue.png" />
+    <Image Include="2D\BulletPurple.png" />
     <Image Include="2D\ButtonTexture.png" />
     <Image Include="2D\Defender.png" />
     <Image Include="2D\Enemy.png" />
@@ -178,6 +181,7 @@
     <Image Include="2D\LargeEnemyUpdated.png" />
     <Image Include="2D\PauseButton.png" />
     <Image Include="2D\Player.png" />
+    <Image Include="2D\ShootingEnemy.png" />
     <Image Include="2D\SpaceBackground4K.png" />
     <Image Include="2D\The HealthBar.png" />
   </ItemGroup>

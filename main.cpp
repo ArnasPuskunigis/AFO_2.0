@@ -3,6 +3,7 @@
 #include <SFML/Audio.hpp>
 #include "Player.h"
 #include "Enemy.h"
+#include "ShootingEnemy.h"
 #include "Pickup.h"
 #include "Bullet.h"
 #include <math.h>
@@ -112,10 +113,14 @@ int main()
 
     sf::Texture bulletTexture;
     bulletTexture.loadFromFile("2D/BulletBlue.png");
+    sf::Texture enemyBulletTexture;
+    enemyBulletTexture.loadFromFile("2D/Bullet.png");
     sf::Texture playerTexture;
     playerTexture.loadFromFile("2D/Player.png");
     sf::Texture enemyTexture;
     enemyTexture.loadFromFile("2D/Enemy.png");
+    sf::Texture shootingEnemyTexture;
+    shootingEnemyTexture.loadFromFile("2D/ShootingEnemy.png");
     sf::Texture ammoTexture;
     ammoTexture.loadFromFile("2D/AmmoCrate.png");
     sf::Texture healthTexture;
@@ -125,6 +130,7 @@ int main()
     Player player(playerTexture, events);
     std::vector<Bullet> bullets;
 
+    std::vector<Bullet> enemyBullets;
     std::vector<std::unique_ptr<Enemy>> enemies;
     std::vector<std::unique_ptr<Pickup>> pickups;
 
@@ -299,17 +305,17 @@ int main()
 
         window.clear(sf::Color::Black);
         window.setView(camera);
-        window.draw(backgroundSprite);
 
         if (state == GameState::Menu)
         {
+            window.draw(backgroundSprite);
             window.setView(view);
             window.draw(titleText);
             playButton.draw(window);
             htpButton.draw(window);
             quitButton.draw(window);
         }
-        if (state == GameState::HowToPlay)
+        else if (state == GameState::HowToPlay)
         {
             window.setView(view);
             window.draw(howToPlaySprite);
@@ -330,17 +336,19 @@ int main()
             backgroundSprite.setPosition(camPos.x - VIRTUAL_W / 2, camPos.y - VIRTUAL_H / 2);
             window.draw(backgroundSprite);
 
-            player.update(deltaTime, enemies);
+            player.update(deltaTime, enemies, enemyBullets);
             sf::Vector2f playerPos = player.getSprite().getPosition();
 
             // spawning enemies
-            events.emit(GameEvent::WaveStarted);
             spawnTimer += deltaTime;
             if (spawnTimer >= spawnInterval && enemiesSpawned < enemiesPerWave)
             {
                 spawnTimer = 0.f;
                 sf::Vector2f spawnPos = getSpawnPosition(player.getSprite().getPosition(), 1000.f, 1500.f);
-                enemies.push_back(std::make_unique<Enemy>(spawnPos.x, spawnPos.y, enemyTexture, audioManager, events));
+                if (enemiesSpawned % 3 == 0)
+                    enemies.push_back(std::make_unique<ShootingEnemy>(spawnPos.x, spawnPos.y, shootingEnemyTexture, enemyBulletTexture, audioManager, events, enemyBullets));
+                else
+                    enemies.push_back(std::make_unique<Enemy>(spawnPos.x, spawnPos.y, enemyTexture, audioManager, events));
                 enemiesSpawned++;
             }
             // spawning pickups
@@ -367,20 +375,26 @@ int main()
                 enemiesSpawned = 0;
                 spawnTimer = 0.f;
                 std::cout << "Wave " << wave << " starting!" << std::endl;
+                events.emit(GameEvent::WaveStarted);
             }
 
             for (Bullet& bullet : bullets) bullet.update(deltaTime);
+            for (Bullet& enemyBullet : enemyBullets) enemyBullet.update(deltaTime);
             for (auto& enemy : enemies) enemy->update(deltaTime, bullets, playerPos);
             for (auto& pickup : pickups) pickup->update(deltaTime, player);
 
             bullets.erase(std::remove_if(bullets.begin(), bullets.end(),
                 [](const Bullet& b) { return !b.isAlive(); }), bullets.end());
+            enemyBullets.erase(std::remove_if(enemyBullets.begin(), enemyBullets.end(),
+                [](const Bullet& b) { return !b.isAlive(); }), enemyBullets.end());
             enemies.erase(std::remove_if(enemies.begin(), enemies.end(),
                 [](const std::unique_ptr<Enemy>& e) { return !e->isAlive(); }), enemies.end());
             pickups.erase(std::remove_if(pickups.begin(), pickups.end(),
                 [](const std::unique_ptr<Pickup>& p) { return !p->isAlive(); }), pickups.end());
 
             for (Bullet& bullet : bullets) bullet.draw(window);
+            for (Bullet& b : enemyBullets) b.draw(window);
+
             for (auto& enemy : enemies) enemy->draw(window);
             for (auto& pickup : pickups) pickup->draw(window);
             
